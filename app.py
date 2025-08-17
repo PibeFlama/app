@@ -27,7 +27,7 @@ def guardar_datos(datos):
 # {"mensaje": "API de Vuelos"} en formato JSON
 @app.route("/", methods=["GET"])
 def inicio():
-    pass
+    return jsonify({"mensaje": "API de Vuelos"})
 
 # Consigna 2:
 # Crea un endpoint GET /api/vuelos que:
@@ -117,7 +117,7 @@ def vender_vuelo():
 if __name__ == "__main__":
     if not os.path.exists(DATA_FILE):
         guardar_datos([])
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8000, debug=True)
 
 
 # EJEMPLOS DE CÓMO PROBAR LA API:
