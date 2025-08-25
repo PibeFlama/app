@@ -78,22 +78,27 @@ def agregar_vuelo():
     if not destino or destino == "" or destino== None:
         return jsonify({"error" : "el campo destino es obligatorio"}), 400
     
-    ids= []
-    for vuelos in lista:
-        id= vuelos.get("id")
-        ids.append(id)
-    idNuevo= max(ids)+1
-    if ids== None:
-        idNuevo=1
+    ids = []
 
-    capacidad= x.get("capacidad")
-    if capacidad== "" or None:
-        capacidad= 340
+    for vuelo in lista:
+        if "id" in vuelo:      
+            ids.append(vuelo["id"])
+
+    if len(ids) == 0:
+        id = 1
+    else:
+        id = max(ids) + 1
+
+    capacidad= x.get("capacidad", 340)
     
-    vendidos= x.get("vendidos")
-    if vendidos=="" or None:
-        vendidos=0
     
+    vendidos= x.get("vendidos", 0)
+    
+    x["id"] = id
+    x["destino"] = destino.lower()
+    x["capacidad"] = capacidad
+    x["vendidos"] = vendidos
+
     lista.append(x)
     guardar_datos(lista)
 
