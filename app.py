@@ -36,7 +36,9 @@ def inicio():
 # 3. Aplique el método str.title() al campo "destino" de cada vuelo, de modo que se devuelva con la primera letra en mayúscula.
 @app.route("/api/vuelos", methods=["GET"])
 def listar_vuelos():
-    x=cargar_datos
+    x=cargar_datos()
+    for vuelo in x:
+        vuelo["destino"]= vuelo["destino"].title()
     return jsonify(x)
 
 # Consigna 3:
@@ -48,7 +50,11 @@ def listar_vuelos():
 # 5. Aplique el método str.title() al campo "destino" del vuelo, de modo que se devuelva con la primera letra en mayúscula.
 @app.route("/api/vuelos/<int:vuelo_id>", methods=["GET"])
 def obtener_vuelo(vuelo_id):
-    pass
+    x=cargar_datos()
+    for vuelo in x:
+        if vuelo["id"]== vuelo_id:
+            return jsonify(vuelo)
+    return jsonify({"error": "no existe ese vuelo"}), 404        
 
 # Consigna 4:
 # Crea un endpoint POST /api/vuelos que:
@@ -65,7 +71,37 @@ def obtener_vuelo(vuelo_id):
 # 10. Minuscula
 @app.route("/api/vuelos", methods=["POST"])
 def agregar_vuelo():
-    pass
+    lista= cargar_datos()
+    x= request.get_json()
+
+    destino= x.get("destino")
+    if not destino or destino == "" or destino== None:
+        return jsonify({"error" : "el campo destino es obligatorio"}), 400
+    
+    ids= []
+    for vuelos in lista:
+        id= vuelos.get("id")
+        ids.append(id)
+    idNuevo= max(ids)+1
+    if ids== None:
+        idNuevo=1
+
+    capacidad= x.get("capacidad")
+    if capacidad== "" or None:
+        capacidad= 340
+    
+    vendidos= x.get("vendidos")
+    if vendidos=="" or None:
+        vendidos=0
+    
+    lista.append(x)
+    guardar_datos(lista)
+
+    return jsonify(x), 201
+
+
+
+
 
 # Consigna 5:
 # Crea un endpoint PUT /api/vuelos/<int:vuelo_id> que:
