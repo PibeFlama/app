@@ -36,7 +36,8 @@ def inicio():
 # 3. Aplique el método str.title() al campo "destino" de cada vuelo, de modo que se devuelva con la primera letra en mayúscula.
 @app.route("/api/vuelos", methods=["GET"])
 def listar_vuelos():
-    pass
+    x=cargar_datos
+    return jsonify(x)
 
 # Consigna 3:
 # Crea un endpoint GET /api/vuelos/<int:vuelo_id> que:
