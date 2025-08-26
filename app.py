@@ -90,8 +90,6 @@ def agregar_vuelo():
         id = max(ids) + 1
 
     capacidad= x.get("capacidad", 340)
-    
-    
     vendidos= x.get("vendidos", 0)
     
     x["id"] = id
@@ -120,7 +118,20 @@ def agregar_vuelo():
 # 7. Minuscula
 @app.route("/api/vuelos/<int:vuelo_id>", methods=["PUT"])
 def actualizar_vuelo(vuelo_id):
-    pass
+    x= request.get_json()
+    lista=cargar_datos()
+
+    for vuelo in lista:
+        if vuelo["id"]== vuelo_id:
+            vuelo.update({
+                "capacidad": int(x.get("capacidad", vuelo["capacidad"])),
+                "destino": x.get("destino", vuelo["destino"]),
+                "vendidos": int(x.get("vendidos", vuelo["vendidos"]))
+            })
+            guardar_datos(lista)
+            return jsonify(vuelo)
+    return jsonify({"error" : "no se encontro vuelo con esa id"}), 404
+
 
 # Consigna 6:
 # Crea un endpoint DELETE /api/vuelos/<int:vuelo_id> que:
@@ -132,7 +143,21 @@ def actualizar_vuelo(vuelo_id):
 # 6. Retorne {"mensaje": f"Vuelo {vuelo_id} eliminado correctamente"}
 @app.route("/api/vuelos/<int:vuelo_id>", methods=["DELETE"])
 def eliminar_vuelo(vuelo_id):
-    pass
+    lista=cargar_datos()
+    listaNueva=[]
+    tamanio= len(lista)
+    for vuelo in lista:
+        if vuelo["id"]!= vuelo_id:
+            listaNueva.append(vuelo)
+    tamanio2= len(listaNueva)
+    if tamanio==tamanio2:
+        return jsonify({"error": "no se encontró un vuelo con esa id"})
+        
+        
+    guardar_datos(listaNueva)
+    return jsonify(listaNueva)
+
+    
 
 # Consigna 7:
 # Crear un endpoint POST /vender que:
@@ -154,7 +179,25 @@ def eliminar_vuelo(vuelo_id):
 # 7. Devuelva el vuelo actualizado en formato JSON.
 @app.route("/api/vender", methods=["POST"])
 def vender_vuelo():
-    pass
+    x = request.get_json()
+    lista= cargar_datos()
+
+    for vuelo in lista:
+        if vuelo["id"]== x.get("id"):
+            if vuelo["vendidos"]>=vuelo["capacidad"] :
+                return jsonify({"error": "vuelo completo"}), 400
+            vuelo["vendidos"]+=1
+            guardar_datos(lista)
+            return jsonify(vuelo)
+    return jsonify({"error" : "no se encontro vuelo con esa id"}), 404
+    
+            
+
+
+
+
+
+
 
 if __name__ == "__main__":
     if not os.path.exists(DATA_FILE):
